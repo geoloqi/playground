@@ -13,7 +13,7 @@ var People = {
     People.user_list_setup($("#followers"), users)
 
   
-  	$(".username").click(function(){
+  	$("#followers .find").click(function(){
 		var tmp = $(this).siblings(".latlng").html();
 		if(tmp.length > 0){		
 			var lat = tmp.split(",")[0];
@@ -46,8 +46,8 @@ var People = {
     var d = document.createElement('div');
     d.setAttribute('id', user.username);
     d.innerHTML = '\
-        <img src="http://geoloqi.com/img/'+user.username+'.png" style="vertical-align:top; float:left" />\
-        <a class="username" href="javascript:void(0);"> '+user.username+' </a>\
+        <a class="find" href="javascript:void(0);"><img src="http://geoloqi.com/img/'+user.username+'.png" style="vertical-align:top; float:left" border="0" /></a>\
+        <a class="find" href="javascript:void(0);"> '+user.username+' </a>\
         <div id="'+user.username+'_update"></div>\
         <div id="'+user.username+'_battery"></div>\
 		<div class="latlng"></div>\

@@ -9,8 +9,19 @@ var People = {
   
     var users = [{username:"someuser1", service:{type:"geoloqi", id:"someuser1"}}, 
                  {username:"someuser2", service:{type:"icecondor", id:"http://openid.org/"}}, 
-                 {username:"jtbandes", service:{type:"instamapper", id:"12345"}}];
+                 {username:"someuser3", service:{type:"instamapper", id:"12345"}}];
     People.user_list_setup($("#followers"), users)
+
+  
+  	$(".username").click(function(){
+		var tmp = $(this).siblings(".latlng").html();
+		if(tmp.length > 0){		
+			var lat = tmp.split(",")[0];
+			var lng = tmp.split(",")[1];
+			var latLng = new google.maps.LatLng(lat, lng);
+			map.panTo(latLng);
+		}
+	});
   
     People.follow_users(map, users);
   },
@@ -36,9 +47,10 @@ var People = {
     d.setAttribute('id', user.username);
     d.innerHTML = '\
         <img src="http://geoloqi.com/img/'+user.username+'.png" style="vertical-align:top; float:left" />\
-        <div> '+user.username+' </div>\
+        <a class="username" href="javascript:void(0);"> '+user.username+' </a>\
         <div id="'+user.username+'_update"></div>\
         <div id="'+user.username+'_battery"></div>\
+		<div class="latlng"></div>\
         <br clear="all" />\
     ';
     return d;
@@ -112,6 +124,7 @@ var People = {
       user.last_date = last_date;
       user.marker.setPosition(myLatLng);
       user.marker.setTitle(json[0].location.created_at);
+	  $("#"+user.username+" .latlng").html(myLatLng.lat()+","+myLatLng.lng());
       me.fadeOut();
       me.html(People.time_ago(last_date));
       me.fadeIn();
@@ -130,6 +143,7 @@ var People = {
       user.last_date = last_date;
       user.marker.setPosition(myLatLng);
       user.marker.setTitle(json[0].location.created_at);
+	  $("#"+user.username+" .latlng").html(myLatLng.lat()+","+myLatLng.lng());
       me.fadeOut();
       me.html(People.time_ago(last_date));
       me.fadeIn();
@@ -147,6 +161,7 @@ var People = {
       user.last_date = last_date;
       user.marker.setPosition(myLatLng);
       user.marker.setTitle(json.data.date);
+	  $("#"+user.username+" .latlng").html(myLatLng.lat()+","+myLatLng.lng());
       me.fadeOut();
       me.html(People.time_ago(last_date));
       me.fadeIn();

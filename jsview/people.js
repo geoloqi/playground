@@ -7,12 +7,11 @@ var People = {
     var map = People.setup_map(map_element);
     //google.maps.event.trigger(map, 'resize')
   
-    var users = [{username:"someuser1", service:{type:"geoloqi", id:"someuser1"}}, 
-                 {username:"someuser2", service:{type:"icecondor", id:"http://openid.org/"}}, 
-                 {username:"someuser3", service:{type:"instamapper", id:"12345"}}];
-    People.user_list_setup($("#followers"), users)
+    var users = [{username:"someuser1", email:"some@where", service:{type:"geoloqi", id:"someuser1"}}, 
+                 {username:"someuser2", email:"some@where", service:{type:"icecondor", id:"http://openid.org/"}}, 
+                 {username:"someuser3", email:"some@where", service:{type:"instamapper", id:"12345"}}];
 
-  
+    People.user_list_setup($("#followers"), users)
   	$("#followers .find").click(function(){
 		var tmp = $(this).siblings(".latlng").html();
 		if(tmp.length > 0){		
@@ -46,7 +45,7 @@ var People = {
     var d = document.createElement('div');
     d.setAttribute('id', user.username);
     d.innerHTML = '\
-        <a class="find" href="javascript:void(0);"><img src="http://geoloqi.com/img/'+user.username+'.png" style="vertical-align:top; float:left" border="0" /></a>\
+        <a class="find" href="javascript:void(0);"><img src="'+People.gravatar(user.email,40)+'" style="vertical-align:top; float:left;" border="0" /></a>\
         <a class="find" href="javascript:void(0);"> '+user.username+' </a>\
         <div id="'+user.username+'_update"></div>\
         <div id="'+user.username+'_battery"></div>\
@@ -74,12 +73,11 @@ var People = {
       var user = users[i];
 
       // figure out how to get the user's image here
-      var image = 'http://geoloqi.com/img/' + user.username + '.png';
       var myLatLng = new google.maps.LatLng(45.5, -122.6);
       user.marker = new google.maps.Marker({
         position: myLatLng,
         map: map,
-        icon: image,
+        icon: People.gravatar(user.email,30),
       });
       People.update_location(users, user, map);
   
@@ -110,7 +108,6 @@ var People = {
       $.getJSON(url, function(json){People.instamapper_update(json, users, user, map)});
     }
   },
-
 
   instamapper_update: function(json,users,user,map) {
     var me = $('#'+user.username+'_update');
@@ -149,6 +146,7 @@ var People = {
       me.fadeIn();
       People.sort_by_last_time(users, user);
   },
+
   geoloqi_update: function(json,users,user,map) {
     var me = $('#'+user.username+'_update');
       var myLatLng = new google.maps.LatLng(json.data.location.position.latitude, 
@@ -199,6 +197,10 @@ var People = {
     if (unit == "hours" && value > 24) { unit = "days"; value = value / 24; }
     value = Math.floor(value);
     return  value+' '+unit;
+  },
+
+  gravatar: function(email,size) {
+    return "http://gravatar.com/avatar/"+MD5_hexhash(email)+"?s="+size;
   }
 }
 

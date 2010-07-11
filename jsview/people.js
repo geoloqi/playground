@@ -43,8 +43,16 @@ var People = {
     d.innerHTML = '\
         <a class="find" href="javascript:void(0);"><img src="'+People.gravatar(user.email,40)+'" style="vertical-align:top; float:left;" border="0" /><img src="'+user.service.type+'.png"></a>\
         <a class="find" href="javascript:void(0);"> '+user.username+' </a>\
-        <div id="'+user.username+'_update"></div>\
-        <div id="'+user.username+'_battery"></div>\
+        <div>\
+          <img src="icon_clock.gif" style="float:left">\
+          <div id="'+user.username+'_update">\
+          </div>\
+        </div>\
+        <div >\
+          <img id="'+user.username+'_battery_img" src="icon_world_dynamic.gif" style="float:left; display:none">\
+          <div id="'+user.username+'_battery">\
+          </div>\
+        </div>\
 		<div class="latlng"></div>\
         <br clear="all" />\
     ';
@@ -161,6 +169,7 @@ var People = {
       me.fadeIn();
       if(typeof(json.data.raw)!="undefined") {
         $('#'+user.username+'_battery').html(json.data.raw.battery+'% batt');
+        $('#'+user.username+'_battery_img').show();
       }
       People.sort_by_last_time(users, user);
   },

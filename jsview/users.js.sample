@@ -1,0 +1,4 @@
+var Users = [{username:"someuser1", email:"some@where", service:{type:"geoloqi", id:"someuser1"}}, 
+             {username:"someuser2", email:"some@where", service:{type:"icecondor", id:"http://openid.org/"}}, 
+             {username:"someuser3", email:"some@where", service:{type:"instamapper", id:"12345"}}];
+

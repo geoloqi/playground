@@ -7,11 +7,7 @@ var People = {
     var map = People.setup_map(map_element);
     //google.maps.event.trigger(map, 'resize')
   
-    var users = [{username:"someuser1", email:"some@where", service:{type:"geoloqi", id:"someuser1"}}, 
-                 {username:"someuser2", email:"some@where", service:{type:"icecondor", id:"http://openid.org/"}}, 
-                 {username:"someuser3", email:"some@where", service:{type:"instamapper", id:"12345"}}];
-
-    People.user_list_setup($("#followers"), users)
+    People.user_list_setup($("#followers"), Users)
   	$("#followers .find").click(function(){
 		var tmp = $(this).siblings(".latlng").html();
 		if(tmp.length > 0){		
@@ -22,7 +18,7 @@ var People = {
 		}
 	});
   
-    People.follow_users(map, users);
+    People.follow_users(map, Users);
   },
   
   user_list_load: function (user_list_url, followers_element) {

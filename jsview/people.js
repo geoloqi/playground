@@ -121,7 +121,7 @@ var People = {
         map.panTo(myLatLng);
       }
       user.last_position = myLatLng;
-      var last_date = (new Date()).setISO8601(json[0].location.timestamp);
+      var last_date = (new Date()).setISO8601(json[0].location.created_at);
       user.last_date = last_date;
       user.marker.setPosition(myLatLng);
       user.marker.setTitle(json[0].location.created_at);
@@ -140,10 +140,10 @@ var People = {
         map.panTo(myLatLng);
       }
       user.last_position = myLatLng;
-      var last_date = (new Date()).setISO8601(json[0].location.created_at);
+      var last_date = (new Date()).setISO8601(json[0].location.timestamp);
       user.last_date = last_date;
       user.marker.setPosition(myLatLng);
-      user.marker.setTitle(json[0].location.created_at);
+      user.marker.setTitle(json[0].location.timestamp);
 	  $("#"+user.username+" .latlng").html(myLatLng.lat()+","+myLatLng.lng());
       me.fadeOut();
       me.html(People.time_ago(last_date));

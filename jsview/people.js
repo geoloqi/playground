@@ -107,6 +107,10 @@ var People = {
       url = "http://geoloqi.com/proxy.php?user="+user.service.id+"&callback=?";
       $.getJSON(url, function(json){People.geoloqi_update(json, users, user, map)});
     }
+    if(user.service.type == "geoloqi2") {
+      url = user.service.id+"&callback=?";
+      $.getJSON(url, function(json){People.geoloqi_update(json, users, user, map)});
+    }
     if(user.service.type == "instamapper") {
       url = 'https://www.instamapper.com/api?action=getPositions&key='+user.service.id+'&format=json&jsoncallback=?'
       $.getJSON(url, function(json){People.instamapper_update(json, users, user, map)});

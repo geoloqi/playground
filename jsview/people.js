@@ -1,3 +1,36 @@
+var PeepsOverlay  = function() {
+  google.maps.OverlayView.call(this);
+}
+PeepsOverlay.prototype = new google.maps.OverlayView();
+PeepsOverlay.prototype.onAdd = function() {
+  var pane = this.getPanes().overlayImage;
+  for(var i in Users){
+    var user = Users[i];
+    $(pane).append(People.user_infopanel(user));
+  }
+};
+PeepsOverlay.prototype.draw = function() {
+  var pane = this.getPanes().overlayImage;
+  for(var i in Users){
+    var user = Users[i];
+    var point = this.getProjection().fromLatLngToDivPixel(user.marker);
+    var panel = $('#infopanel_'+user.username);
+    var new_x, new_y;
+    panel.css("position","absolute");
+    if(point) {
+      new_x = point.x-(panel.width()/2);
+      new_y = point.y-panel.height();
+    } else {
+      new_x = -50
+      new_y = -50;
+    }
+    panel.css("left",new_x+"px");
+    panel.css("top",new_y+"px");
+  }
+};
+PeepsOverlay.prototype.onRemove = function() {
+};
+
 var People = {
 
   setup: function () {
@@ -5,20 +38,30 @@ var People = {
     $.ajaxSetup({timeout:15000});
     var map_element = document.getElementById("map");
     var map = People.setup_map(map_element);
-    //google.maps.event.trigger(map, 'resize')
+    var peepso = new PeepsOverlay();
+    peepso.setMap(map);
   
-    People.user_list_setup($("#followers"), Users)
-  	$("#followers .find").click(function(){
-		var tmp = $(this).siblings(".latlng").html();
-		if(tmp.length > 0){		
-			var lat = tmp.split(",")[0];
-			var lng = tmp.split(",")[1];
-			var latLng = new google.maps.LatLng(lat, lng);
-			map.panTo(latLng);
-		}
-	});
+    People.user_list_setup($("#followers"), Users);
+    $("#followers .find").click(function(){
+	var username = $(this).parent().attr('id');
+        var user = People.userfind(username)
+	map.panTo(user.marker);
+    });
   
     People.follow_users(map, Users);
+  },
+  
+  setup_map: function (map_element) {
+    var last = {lat: 45.5, lng: -122.65};
+  
+    var latlng = new google.maps.LatLng(last.lat, last.lng);
+    var myOptions = {
+      zoom: 14,
+      center: latlng,
+      mapTypeId: google.maps.MapTypeId.ROADMAP
+    };
+  
+    return new google.maps.Map(map_element, myOptions);
   },
   
   user_list_load: function (user_list_url, followers_element) {
@@ -37,6 +80,15 @@ var People = {
     }
   },
   
+  user_infopanel: function(user) {
+    var d = document.createElement('div');
+    d.setAttribute('id', 'infopanel_'+user.username);
+    d.innerHTML = '\
+             <img src="'+People.gravatar(user.email,40)+'" \
+                  style="vertical-align:top; float:left;" border="0" />';
+    return d;
+  },
+
   user_widget: function(user) {
     var d = document.createElement('div');
     d.setAttribute('id', user.username);
@@ -59,30 +111,12 @@ var People = {
     return d;
   },
 
-  setup_map: function (map_element) {
-    var last = {lat: 45.5, lng: -122.65};
-  
-    var latlng = new google.maps.LatLng(last.lat, last.lng);
-    var myOptions = {
-      zoom: 14,
-      center: latlng,
-      mapTypeId: google.maps.MapTypeId.ROADMAP
-    };
-  
-    return new google.maps.Map(map_element, myOptions);
-  },
-  
   follow_users: function (map, users) {
     for(var i in users){
       var user = users[i];
 
-      // figure out how to get the user's image here
-      var myLatLng = new google.maps.LatLng(45.5, -122.6);
-      user.marker = new google.maps.Marker({
-        position: myLatLng,
-        map: map,
-        icon: People.gravatar(user.email,30),
-      });
+      // eliminate this default
+      user.marker = new google.maps.LatLng(45.5, -122.6);
       People.update_location(users, user, map);
   
       setInterval(function(user){
@@ -121,15 +155,12 @@ var People = {
     var me = $('#'+user.username+'_update');
       var myLatLng = new google.maps.LatLng(json[0].location.geom.y, 
                                             json[0].location.geom.x);
-      if(!user.marker.getPosition().equals(myLatLng)) {
+      if(!user.marker.equals(myLatLng)) {
         map.panTo(myLatLng);
       }
-      user.last_position = myLatLng;
       var last_date = (new Date()).setISO8601(json[0].location.created_at);
       user.last_date = last_date;
-      user.marker.setPosition(myLatLng);
-      user.marker.setTitle(json[0].location.created_at);
-	  $("#"+user.username+" .latlng").html(myLatLng.lat()+","+myLatLng.lng());
+      user.marker = myLatLng;
       me.fadeOut();
       me.html(People.time_ago(last_date));
       me.fadeIn();
@@ -140,15 +171,12 @@ var People = {
     var me = $('#'+user.username+'_update');
       var myLatLng = new google.maps.LatLng(json[0].location.geom.y, 
                                             json[0].location.geom.x);
-      if(!user.marker.getPosition().equals(myLatLng)) {
+      if(!user.marker.equals(myLatLng)) {
         map.panTo(myLatLng);
       }
-      user.last_position = myLatLng;
       var last_date = (new Date()).setISO8601(json[0].location.timestamp);
       user.last_date = last_date;
-      user.marker.setPosition(myLatLng);
-      user.marker.setTitle(json[0].location.timestamp);
-	  $("#"+user.username+" .latlng").html(myLatLng.lat()+","+myLatLng.lng());
+      user.marker = myLatLng;
       me.fadeOut();
       me.html(People.time_ago(last_date));
       me.fadeIn();
@@ -156,18 +184,15 @@ var People = {
   },
 
   geoloqi_update: function(json,users,user,map) {
-    var me = $('#'+user.username+'_update');
+      var me = $('#'+user.username+'_update');
       var myLatLng = new google.maps.LatLng(json.data.location.position.latitude, 
                                             json.data.location.position.longitude);
-      if(!user.marker.getPosition().equals(myLatLng)) {
+      if(!user.marker.equals(myLatLng)) {
         map.panTo(myLatLng);
       }
-      user.last_position = myLatLng;
       var last_date = (new Date()).setISO8601(json.data.date);
       user.last_date = last_date;
-      user.marker.setPosition(myLatLng);
-      user.marker.setTitle(json.data.date);
-	  $("#"+user.username+" .latlng").html(myLatLng.lat()+","+myLatLng.lng());
+      user.marker = myLatLng;
       me.fadeOut();
       me.html(People.time_ago(last_date));
       me.fadeIn();
@@ -177,6 +202,7 @@ var People = {
       }
       People.sort_by_last_time(users, user);
   },
+
   sort_by_last_time: function (users, user) {
     if (users.length < 2) { return; }
     var winner = null;
@@ -210,6 +236,14 @@ var People = {
 
   gravatar: function(email,size) {
     return "http://gravatar.com/avatar/"+MD5_hexhash(email)+"?s="+size;
+  },
+
+  userfind: function(username) {
+    for(var i=0; i < Users.length; i++) {
+      if(Users[i].username == username) {
+        return Users[i];
+      }
+    }
   }
 }
 

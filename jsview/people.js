@@ -84,8 +84,9 @@ var People = {
     var d = document.createElement('div');
     d.setAttribute('id', 'infopanel_'+user.username);
     d.innerHTML = '\
-             <img src="'+People.gravatar(user.email,40)+'" \
-                  style="vertical-align:top; float:left;" border="0" />';
+         <img src="'+People.gravatar(user.email,30)+'" style="vertical-align:top" />\
+         <img src="bottom_pointer.png" style="vertical-align:top;" />\
+              ';
     return d;
   },
 

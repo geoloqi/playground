@@ -10,16 +10,18 @@ PeepsOverlay.prototype.onAdd = function() {
   }
 };
 PeepsOverlay.prototype.draw = function() {
-  var pane = this.getPanes().overlayImage;
   for(var i in Users){
     var user = Users[i];
     var panel = $('#infopanel_'+user.username);
+    var new_x, new_y;
     panel.css("position","absolute");
     if(user.marker.length > 0) {
       var point = this.getProjection().fromLatLngToDivPixel(user.marker[user.marker.length-1]);
-      var new_x, new_y;
       new_x = point.x-(panel.width()/2);
       new_y = point.y-panel.height();
+      for(var i=0; i < user.marker.length; i++) {
+        var point = this.getProjection().fromLatLngToDivPixel(user.marker[i]);
+      }
     } else {
       new_x = -50
       new_y = -50;
@@ -40,6 +42,7 @@ var People = {
     var map = People.setup_map(map_element);
     var peepso = new PeepsOverlay();
     peepso.setMap(map);
+
   
     People.user_list_setup($("#followers"), Users);
     $("#followers .find").click(function(){
@@ -79,7 +82,10 @@ var People = {
   
   user_list_setup: function (ulist, users) {
     for(var i in users){
-      ulist.append(People.user_widget(users[i]));
+      var user = Users[i];
+      user.marker = [];
+      ulist.append(People.user_widget(user));
+      $('#'+user.username+'_count').html(user.marker.length);
     }
   },
   
@@ -109,7 +115,9 @@ var People = {
           <div id="'+user.username+'_battery">\
           </div>\
         </div>\
-		<div class="latlng"></div>\
+        <div>\
+          <span id="'+user.username+'_count"></span> points\
+        </div>\
         <br clear="all" />\
     ';
     return d;
@@ -119,7 +127,6 @@ var People = {
     for(var i in users){
       var user = users[i];
 
-      user.marker = [];
       People.update_location(users, user, map);
   
       setInterval(function(user){
@@ -137,7 +144,7 @@ var People = {
   service_update: function(users, user, map) {
     var service_url;
     if(user.service.type == "icecondor") {
-      url = "http://icecondor.com/locations.jsonp?id="+user.service.id+"&limit=2&callback=?";
+      url = "http://icecondor.com/locations.jsonp?id="+user.service.id+"&limit=1&callback=?";
       $.getJSON(url, function(json){People.icecondor_update(json, users, user, map)});
     } 
     if(user.service.type == "geoloqi") {
@@ -201,6 +208,8 @@ var People = {
   },
 
   sort_by_last_time: function (users, user) {
+    $('#'+user.username+'_count').html(user.marker.length);
+
     if (users.length < 2) { return; }
     var winner = null;
 

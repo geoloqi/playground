@@ -148,11 +148,14 @@ var People = {
       $.getJSON(url, function(json){People.icecondor_update(json, users, user, map)});
     } 
     if(user.service.type == "geoloqi") {
-      url = "https://api.geoloqi.com/1/share/last?geoloqi_token="+user.service.id;
+console.log(user.service.type);
+      //url = "https://api.geoloqi.com/1/share/last?geoloqi_token="+user.service.id;
+      url = "http://jsonpify.heroku.com?resource=https://api.geoloqi.com/1/share/last%3Fgeoloqi_token="+user.service.id+"&callback=?";
       $.getJSON(url, function(json){People.geoloqi_update(json, users, user, map)});
     }
     if(user.service.type == "latitude") {
-      url = "http://www.google.com/latitude/apps/badge/api?user="+user.service.id+"&type=json";
+      //url = "http://www.google.com/latitude/apps/badge/api?user="+user.service.id+"&type=json";
+      url = "http://jsonpify.heroku.com?resource=http://www.google.com/latitude/apps/badge/api%3Fuser="+user.service.id+"%26type=json&callback=?";
       $.getJSON(url, function(json){People.latitude_update(json, users, user, map)});
     }
     if(user.service.type == "instamapper") {
@@ -161,50 +164,66 @@ var People = {
     }
   },
 
+  latitude_update: function(json,users,user,map) {
+    var me = $('#'+user.username+'_update');
+    var myLatLng = new google.maps.LatLng(json.features[0].geometry.coordinates[1], 
+                                          json.features[0].geometry.coordinates[0]);
+    map.panTo(myLatLng);
+    var last_date = new Date(json.features[0].properties.timeStamp*1000);
+    user.last_date = last_date;
+    user.marker.push(myLatLng);
+    me.fadeOut();
+    me.html(People.time_ago(last_date));
+    me.fadeIn();
+    People.sort_by_last_time(users, user);
+  },
+
   instamapper_update: function(json,users,user,map) {
     var me = $('#'+user.username+'_update');
-      var myLatLng = new google.maps.LatLng(json[0].location.geom.y, 
-                                            json[0].location.geom.x);
-      map.panTo(myLatLng);
-      var last_date = (new Date()).setISO8601(json[0].location.created_at);
-      user.last_date = last_date;
-      user.marker.push(myLatLng);
-      me.fadeOut();
-      me.html(People.time_ago(last_date));
-      me.fadeIn();
-      People.sort_by_last_time(users, user);
+    var myLatLng = new google.maps.LatLng(json[0].location.geom.y, 
+                                          json[0].location.geom.x);
+    map.panTo(myLatLng);
+    var last_date = (new Date()).setISO8601(json[0].location.created_at);
+    user.last_date = last_date;
+    user.marker.push(myLatLng);
+    me.fadeOut();
+    me.html(People.time_ago(last_date));
+    me.fadeIn();
+    People.sort_by_last_time(users, user);
   },
 
   icecondor_update: function(json,users,user,map) {
     var me = $('#'+user.username+'_update');
-      var myLatLng = new google.maps.LatLng(json[0].location.geom.y, 
-                                            json[0].location.geom.x);
-      map.panTo(myLatLng);
-      var last_date = (new Date()).setISO8601(json[0].location.timestamp);
-      user.last_date = last_date;
-      user.marker.push(myLatLng);
-      me.fadeOut();
-      me.html(People.time_ago(last_date));
-      me.fadeIn();
-      People.sort_by_last_time(users, user);
+    var myLatLng = new google.maps.LatLng(json[0].location.geom.y, 
+                                          json[0].location.geom.x);
+    map.panTo(myLatLng);
+    var last_date = (new Date()).setISO8601(json[0].location.timestamp);
+    user.last_date = last_date;
+    user.marker.push(myLatLng);
+    me.fadeOut();
+    me.html(People.time_ago(last_date));
+    me.fadeIn();
+    People.sort_by_last_time(users, user);
   },
 
   geoloqi_update: function(json,users,user,map) {
-      var me = $('#'+user.username+'_update');
-      var myLatLng = new google.maps.LatLng(json.data.location.position.latitude, 
-                                            json.data.location.position.longitude);
-      map.panTo(myLatLng);
-      var last_date = (new Date()).setISO8601(json.data.date);
-      user.last_date = last_date;
-      user.marker.push(myLatLng);
-      me.fadeOut();
-      me.html(People.time_ago(last_date));
-      me.fadeIn();
-      if(typeof(json.data.raw)!="undefined") {
-        $('#'+user.username+'_battery').html(json.data.raw.battery+'% batt');
-        $('#'+user.username+'_battery_img').show();
-      }
-      People.sort_by_last_time(users, user);
+console.log(user);
+console.log(json);
+    var me = $('#'+user.username+'_update');
+    var myLatLng = new google.maps.LatLng(json.location.position.latitude, 
+                                          json.location.position.longitude);
+    map.panTo(myLatLng);
+    var last_date = new Date(json.date_ts*1000);
+    user.last_date = last_date;
+    user.marker.push(myLatLng);
+    me.fadeOut();
+    me.html(People.time_ago(last_date));
+    me.fadeIn();
+    if(typeof(json.data.raw)!="undefined") {
+      $('#'+user.username+'_battery').html(json.data.raw.battery+'% batt');
+      $('#'+user.username+'_battery_img').show();
+    }
+    People.sort_by_last_time(users, user);
   },
 
   sort_by_last_time: function (users, user) {

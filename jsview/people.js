@@ -116,7 +116,7 @@ var People = {
           </div>\
         </div>\
         <div>\
-          <span id="'+user.username+'_count"></span> points\
+          <!-- <span id="'+user.username+'_count"></span> points\ -->
         </div>\
         <br clear="all" />\
     ';

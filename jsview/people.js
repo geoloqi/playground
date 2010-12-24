@@ -148,12 +148,12 @@ var People = {
       $.getJSON(url, function(json){People.icecondor_update(json, users, user, map)});
     } 
     if(user.service.type == "geoloqi") {
-      url = "http://geoloqi.com/proxy.php?user="+user.service.id+"&callback=?";
+      url = "https://api.geoloqi.com/1/share/last?geoloqi_token="+user.service.id;
       $.getJSON(url, function(json){People.geoloqi_update(json, users, user, map)});
     }
-    if(user.service.type == "geoloqi2") {
-      url = user.service.id+"&callback=?";
-      $.getJSON(url, function(json){People.geoloqi_update(json, users, user, map)});
+    if(user.service.type == "latitude") {
+      url = "http://www.google.com/latitude/apps/badge/api?user="+user.service.id+"&type=json";
+      $.getJSON(url, function(json){People.latitude_update(json, users, user, map)});
     }
     if(user.service.type == "instamapper") {
       url = 'https://www.instamapper.com/api?action=getPositions&key='+user.service.id+'&format=json&jsoncallback=?'

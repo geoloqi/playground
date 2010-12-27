@@ -116,7 +116,7 @@ var People = {
           </div>\
         </div>\
         <div>\
-          <!-- <span id="'+user.username+'_count"></span> points\ -->
+          <!-- <span id="'+user.username+'_count"></span> points -->\
         </div>\
         <br clear="all" />\
     ';
@@ -149,8 +149,7 @@ var People = {
     } 
     if(user.service.type == "geoloqi") {
 console.log(user.service.type);
-      //url = "https://api.geoloqi.com/1/share/last?geoloqi_token="+user.service.id;
-      url = "http://jsonpify.heroku.com?resource=https://api.geoloqi.com/1/share/last%3Fgeoloqi_token="+user.service.id+"&callback=?";
+      url = "https://api.geoloqi.com/1/share/last?geoloqi_token="+user.service.id+"&callback=?";
       $.getJSON(url, function(json){People.geoloqi_update(json, users, user, map)});
     }
     if(user.service.type == "latitude") {

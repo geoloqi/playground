@@ -1,9 +1,8 @@
 var People = {
 
   setup: function(map_element) {
-    map_element.css('height:'+window.innerHeight+'px');
     $.ajaxSetup({timeout:15000});
-    var map = People.setup_map(map_element[0]);
+    var map = People.setup_map(map_element);
     var peepso = new PeepsOverlay();
     peepso.setMap(map);
   
@@ -20,6 +19,8 @@ var People = {
   },
   
   setup_map: function (map_element) {
+    map_element.css('height:'+window.innerHeight+'px');
+
     // initial map center
     var last = {lat: 45.5, lng: -122.65};
   
@@ -30,7 +31,7 @@ var People = {
       mapTypeId: google.maps.MapTypeId.ROADMAP
     };
   
-    return new google.maps.Map(map_element, myOptions);
+    return new google.maps.Map(map_element[0], myOptions);
   },
   
   user_list_load: function (user_list_url, followers_element) {

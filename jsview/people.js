@@ -1,38 +1,3 @@
-var PeepsOverlay  = function() {
-  google.maps.OverlayView.call(this);
-}
-PeepsOverlay.prototype = new google.maps.OverlayView();
-PeepsOverlay.prototype.onAdd = function() {
-  var pane = this.getPanes().overlayImage;
-  for(var i in Users){
-    var user = Users[i];
-    $(pane).append(People.user_infopanel(user));
-  }
-};
-PeepsOverlay.prototype.draw = function() {
-  for(var i in Users){
-    var user = Users[i];
-    var panel = $('#infopanel_'+user.username);
-    var new_x, new_y;
-    panel.css("position","absolute");
-    if(user.marker.length > 0) {
-      var point = this.getProjection().fromLatLngToDivPixel(user.marker[user.marker.length-1]);
-      new_x = point.x-(panel.width()/2);
-      new_y = point.y-panel.height();
-      for(var i=0; i < user.marker.length; i++) {
-        var point = this.getProjection().fromLatLngToDivPixel(user.marker[i]);
-      }
-    } else {
-      new_x = -50
-      new_y = -50;
-    }
-    panel.css("left",new_x+"px");
-    panel.css("top",new_y+"px");
-  }
-};
-PeepsOverlay.prototype.onRemove = function() {
-};
-
 var People = {
 
   setup: function () {
@@ -268,6 +233,7 @@ var People = {
   }
 }
 
+/* ISO 8601 date format helper */
 Date.prototype.setISO8601 = function(dString){
   var regexp = /(\d\d\d\d)(-)?(\d\d)(-)?(\d\d)(T)?(\d\d)(:)?(\d\d)(:)?(\d\d)(\.\d+)?(Z|([+-])(\d\d)(:)?(\d\d))/;
   var d = dString.toString().match(new RegExp(regexp));
@@ -293,5 +259,44 @@ Date.prototype.setISO8601 = function(dString){
     this.setTime(Date.parse(dString));
   }
   return this;
+};
+
+/* google maps overlay */
+var PeepsOverlay  = function() {
+  google.maps.OverlayView.call(this);
+}
+
+PeepsOverlay.prototype = new google.maps.OverlayView();
+
+PeepsOverlay.prototype.onAdd = function() {
+  var pane = this.getPanes().overlayImage;
+  for(var i in Users){
+    var user = Users[i];
+    $(pane).append(People.user_infopanel(user));
+  }
+};
+PeepsOverlay.prototype.draw = function() {
+  for(var i in Users){
+    var user = Users[i];
+    var panel = $('#infopanel_'+user.username);
+    var new_x, new_y;
+    panel.css("position","absolute");
+    if(user.marker.length > 0) {
+      var point = this.getProjection().fromLatLngToDivPixel(user.marker[user.marker.length-1]);
+      new_x = point.x-(panel.width()/2);
+      new_y = point.y-panel.height();
+      for(var i=0; i < user.marker.length; i++) {
+        var point = this.getProjection().fromLatLngToDivPixel(user.marker[i]);
+      }
+    } else {
+      new_x = -50
+      new_y = -50;
+    }
+    panel.css("left",new_x+"px");
+    panel.css("top",new_y+"px");
+  }
+};
+
+PeepsOverlay.prototype.onRemove = function() {
 };
 

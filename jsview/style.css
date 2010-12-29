@@ -1,0 +1,8 @@
+body {
+  padding: 0;
+  margin: 0;
+}
+.latlng {
+  display: none;
+}
+img { border: 0}

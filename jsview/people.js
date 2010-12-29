@@ -6,6 +6,9 @@ var People = {
     var peepso = new PeepsOverlay();
     peepso.setMap(map);
   
+    $('#gmapIconTemplate').template("gmapIcon");
+    $('#userWidgetTemplate').template("userWidget");
+
     People.user_list_setup($("#followers"), Users);
     $("#followers .find").click(function(){
 	var username = $(this).parent().attr('id');
@@ -54,37 +57,18 @@ var People = {
   },
   
   user_infopanel: function(user) {
-    var d = document.createElement('div');
-    d.setAttribute('id', 'infopanel_'+user.username);
-    d.innerHTML = '\
-         <img src="'+People.gravatar(user.email,30)+'" style="vertical-align:top" />\
-         <img src="bottom_pointer.png" style="vertical-align:top;" />\
-              ';
-    return d;
+    var panel = $.tmpl("gmapIcon", {gravatar_url:People.gravatar(user.email,30)});
+    panel.attr('id', 'infopanel_'+user.username);
+    return panel;
   },
 
   user_widget: function(user) {
-    var d = document.createElement('div');
-    d.setAttribute('id', user.username);
-    d.innerHTML = '\
-        <a class="find" href="javascript:void(0);"><img src="'+People.gravatar(user.email,40)+'" style="vertical-align:top; float:left;" border="0" /><img src="'+user.service.type+'.png"></a>\
-        <a class="find" href="javascript:void(0);"> '+user.username+' </a>\
-        <div>\
-          <img src="icon_clock.gif" style="float:left">\
-          <div id="'+user.username+'_update">\
-          </div>\
-        </div>\
-        <div >\
-          <img id="'+user.username+'_battery_img" src="icon_world_dynamic.gif" style="float:left; display:none">\
-          <div id="'+user.username+'_battery">\
-          </div>\
-        </div>\
-        <div>\
-          <!-- <span id="'+user.username+'_count"></span> points -->\
-        </div>\
-        <br clear="all" />\
-    ';
-    return d;
+    var panel = $.tmpl("userWidget", 
+                   { gravatar_url: People.gravatar(user.email,30),
+                     service_icon_url: user.service.type+".png",
+                     username: user.username });
+    panel.attr('id', user.username);
+    return panel;
   },
 
   follow_users: function (map, users) {
@@ -274,6 +258,7 @@ PeepsOverlay.prototype.onAdd = function() {
     $(pane).append(People.user_infopanel(user));
   }
 };
+
 PeepsOverlay.prototype.draw = function() {
   for(var i in Users){
     var user = Users[i];

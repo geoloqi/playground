@@ -24,6 +24,35 @@
     </div>
     <div id="map" style="width: 85%; height: 700px;"> </div>
 
+    <script id="gmapIconTemplate" type="text/x-jquery-tmpl">
+      <div>
+        <img src="${gravatar_url}" style="vertical-align:top" />
+        <img src="bottom_pointer.png" style="vertical-align:top" />
+      </div>
+    </script>
+
+    <script id="userWidgetTemplate" type="text/x-jquery-tmpl">
+      <div>
+        <a class="find" href="javascript:void(0);">
+          <img src="${gravatar_url}" style="vertical-align:top; float:left;" border="0" />
+          <img src="${service_icon_url}"></a>
+        <a class="find" href="javascript:void(0);"> ${username} </a>
+        <div>
+          <img src="icon_clock.gif" style="float:left">
+          <div id="${username}_update"></div>
+        </div>
+        <div>
+          <img id="${username}_battery_img" 
+               src="icon_world_dynamic.gif" style="float:left; display:none">
+          <div id="${username}_battery"> </div>
+        </div>
+        <div>
+          <!-- <span id="'+user.username+'_count"></span> points -->
+        </div>
+        <br clear="all"/>
+      </div>
+    </script>
+
     <script type="text/javascript">
       $(People.setup($('#map')));
     </script>

@@ -1,13 +1,11 @@
 var People = {
 
-  setup: function () {
-    $('#map').css('height:'+window.innerHeight+'px');
+  setup: function(map_element) {
+    map_element.css('height:'+window.innerHeight+'px');
     $.ajaxSetup({timeout:15000});
-    var map_element = document.getElementById("map");
-    var map = People.setup_map(map_element);
+    var map = People.setup_map(map_element[0]);
     var peepso = new PeepsOverlay();
     peepso.setMap(map);
-
   
     People.user_list_setup($("#followers"), Users);
     $("#followers .find").click(function(){

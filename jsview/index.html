@@ -1,8 +1,7 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html>
   <head>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <meta charset="utf-8" />
     <script type="text/javascript" 
             src="http://maps.google.com/maps/api/js?sensor=false"></script>
     <script type="text/javascript" 
@@ -11,15 +10,19 @@
     <script type="text/javascript" src="users.js"></script>
     <script type="text/javascript" src="people.js"></script>
     <link rel="stylesheet" type="text/css" media="screen" href="style.css" />
+
+    <title>People Watcher</title>
   </head>
+
   <body>
-    <script type="text/javascript">
-      $(People.setup);
-    </script>
     <div id="sidebar" style="width: 15%; float: left; "> 
       <div id="menubar"></div>
       <div id="followers"></div>
     </div>
-    <div id="map" style="width: 85%; height: 700px;"> Map </div>
+    <div id="map" style="width: 85%; height: 700px;"> </div>
+
+    <script type="text/javascript">
+      $(People.setup($('#map')));
+    </script>
   </body>
 </html>

@@ -148,7 +148,6 @@ var People = {
       $.getJSON(url, function(json){People.icecondor_update(json, users, user, map)});
     } 
     if(user.service.type == "geoloqi") {
-console.log(user.service.type);
       url = "https://api.geoloqi.com/1/share/last?geoloqi_token="+user.service.id+"&callback=?";
       $.getJSON(url, function(json){People.geoloqi_update(json, users, user, map)});
     }
@@ -206,8 +205,6 @@ console.log(user.service.type);
   },
 
   geoloqi_update: function(json,users,user,map) {
-console.log(user);
-console.log(json);
     var me = $('#'+user.username+'_update');
     var myLatLng = new google.maps.LatLng(json.location.position.latitude, 
                                           json.location.position.longitude);

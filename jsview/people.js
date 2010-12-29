@@ -64,7 +64,7 @@ var People = {
 
   user_widget: function(user) {
     var panel = $.tmpl("userWidget", 
-                   { gravatar_url: People.gravatar(user.email,30),
+                   { gravatar_url: People.gravatar(user.email,35),
                      service_icon_url: user.service.type+".png",
                      username: user.username });
     panel.attr('id', user.username);

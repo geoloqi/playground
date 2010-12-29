@@ -34,22 +34,27 @@
     </script>
 
     <script id="userWidgetTemplate" type="text/x-jquery-tmpl">
-      <div>
-        <a class="find" href="javascript:void(0);">
-          <img src="${gravatar_url}" style="vertical-align:top; float:left;" border="0" />
-          <img src="${service_icon_url}"></a>
-        <a class="find" href="javascript:void(0);"> ${username} </a>
-        <div>
-          <img src="icon_clock.gif" style="float:left">
-          <div id="${username}_update"></div>
+      <div class="follower">
+        <div style="float:left">
+          <a class="find" href="javascript:void(0);">
+            <img src="${gravatar_url}" />
+          </a>
         </div>
         <div>
-          <img id="${username}_battery_img" 
-               src="icon_world_dynamic.gif" style="float:left; display:none">
-          <div id="${username}_battery"> </div>
+          <img src="${service_icon_url}">
+          <a class="find" href="javascript:void(0);"> ${username} </a>
+          <div>
+            <img src="icon_clock.gif" style="float:left">
+            <div id="${username}_update"></div>
+          </div>
+          <div>
+            <img id="${username}_battery_img" 
+                 src="icon_world_dynamic.gif" style="float:left; display:none">
+            <div id="${username}_battery"> </div>
+          </div>
         </div>
         <div>
-          <!-- <span id="'+user.username+'_count"></span> points -->
+          <!-- <span id="${username}_count"></span> points -->
         </div>
         <br clear="all"/>
       </div>

@@ -11,7 +11,7 @@ var People = {
 
     People.user_list_setup($("#followers"), Users);
     $("#followers .find").click(function(){
-	var username = $(this).parent().attr('id');
+	var username = $(this).parent().parent().attr('id');
         var user = People.userfind(username)
         if(user.marker.length > 0) {
           map.panTo(user.marker[user.marker.length-1]);

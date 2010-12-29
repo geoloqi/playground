@@ -4,7 +4,6 @@ body {
 }
 img { border: 0}
 #sidebar {
-  width: 15%; 
   float: left; 
 }
 #map {

@@ -1,14 +1,23 @@
 body {
   padding: 0;
   margin: 0;
+  background: grey;
 }
 img { border: 0}
 #sidebar {
   float: left; 
 }
+#menubar {
+  color: white;
+  text-align: center;
+}
 #map {
   height: 700px;
+  border: 0.2em black solid;
 }
-.follower{
+.follower {
   font-family:"Times New Roman",Georgia,Serif;
+  margin-top: 0.2em;
+  margin-bottom: 0.2em;
+  background: white;
 }

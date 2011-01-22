@@ -83,12 +83,12 @@ var People = {
   },
   
   update_location: function (user){
-    var me = $('#'+user.username+'_update');
-    me.html(me.html()+' (refreshing)');
-    People.service_update(user.service.type, user);
+    var clock_img = $('#'+user.username+' .time .image');
+    clock_img.attr('src', 'icon_clock_spin.gif');
+    People.start_update(user.service.type, user);
   },
 
-  service_update: function(service_type, user) {
+  start_update: function(service_type, user) {
     var url, parser;
     if(service_type == "icecondor") {
       url = "http://icecondor.com/locations.jsonp?id="+user.service.id+"&limit=1&callback=?";
@@ -153,12 +153,13 @@ var People = {
     me.fadeOut();
     me.html(People.time_ago(user.last_date));
     me.fadeIn();
+    var clock_img = $('#'+user.username+' .time .image');
+    clock_img.attr('src', 'icon_clock.gif');
+    $('#'+user.username+' .count').html(user.marker.length);
     People.sort_by_last_time(user);
   },
 
   sort_by_last_time: function (user) {
-    $('#'+user.username+' .count').html(user.marker.length);
-
     if (Users.length < 2) { return; }
     var winner = null;
 

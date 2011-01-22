@@ -10,14 +10,6 @@ var People = {
     $('#userWidgetTemplate').template("userWidget");
 
     People.user_list_setup($("#followers"));
-    $("#followers .find").click(function(){
-	var username = $(this).parent().parent().attr('id');
-        var user = People.userfind(username)
-        if(user.marker.length > 0) {
-          People.map.panTo(user.marker[user.marker.length-1]);
-        }
-    });
-  
     People.follow_users();
   },
   
@@ -54,6 +46,15 @@ var People = {
       listhtml.append(People.user_widget(user));
       $('#'+user.username+'_count').html(user.marker.length);
     }
+
+    listhtml.find(".gravatar,.username").click(function(){
+	var username = $(this).parent().parent().attr('id');
+        var user = People.userfind(username)
+        if(user.marker.length > 0) {
+          People.map.panTo(user.marker[user.marker.length-1]);
+        }
+    });
+  
   },
   
   map_usermarker: function(user) {

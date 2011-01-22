@@ -114,70 +114,56 @@ var People = {
     var me = $('#'+user.username+'_update');
     var myLatLng = new google.maps.LatLng(json.features[0].geometry.coordinates[1], 
                                           json.features[0].geometry.coordinates[0]);
-    map.panTo(myLatLng);
-    var last_date = new Date(json.features[0].properties.timeStamp*1000);
-    user.last_date = last_date;
-    user.marker.push(myLatLng);
-    me.fadeOut();
-    me.html(People.time_ago(last_date));
-    me.fadeIn();
-    People.sort_by_last_time(users, user);
+    user.last_date = new Date(json.features[0].properties.timeStamp*1000);
+    People.finish_update(user, myLatLng);
   },
 
   instamapper_update: function(json,users,user,map) {
     var me = $('#'+user.username+'_update');
     var myLatLng = new google.maps.LatLng(json[0].location.geom.y, 
                                           json[0].location.geom.x);
-    map.panTo(myLatLng);
-    var last_date = (new Date()).setISO8601(json[0].location.created_at);
-    user.last_date = last_date;
-    user.marker.push(myLatLng);
-    me.fadeOut();
-    me.html(People.time_ago(last_date));
-    me.fadeIn();
-    People.sort_by_last_time(users, user);
+    user.last_date = (new Date()).setISO8601(json[0].location.created_at);
+    People.finish_update(user, myLatLng);
   },
 
   icecondor_update: function(json,users,user,map) {
     var me = $('#'+user.username+'_update');
     var myLatLng = new google.maps.LatLng(json[0].location.geom.y, 
                                           json[0].location.geom.x);
-    map.panTo(myLatLng);
-    var last_date = (new Date()).setISO8601(json[0].location.timestamp);
-    user.last_date = last_date;
-    user.marker.push(myLatLng);
-    me.fadeOut();
-    me.html(People.time_ago(last_date));
-    me.fadeIn();
-    People.sort_by_last_time(users, user);
+    user.last_date = (new Date()).setISO8601(json[0].location.timestamp);
+    People.finish_update(user, myLatLng);
   },
 
   geoloqi_update: function(json,users,user,map) {
-    var me = $('#'+user.username+'_update');
     var myLatLng = new google.maps.LatLng(json.location.position.latitude, 
                                           json.location.position.longitude);
-    map.panTo(myLatLng);
-    var last_date = new Date(json.date_ts*1000);
-    user.last_date = last_date;
-    user.marker.push(myLatLng);
-    me.fadeOut();
-    me.html(People.time_ago(last_date));
-    me.fadeIn();
+    user.last_date = new Date(json.date_ts*1000);
     if(typeof(json.raw.battery)!="undefined") {
-      $('#'+user.username+'_battery').html(json.raw.battery+'% batt');
-      $('#'+user.username+'_battery_img').show();
+      var me = $('#'+user.username+' .battery');
+      me.find('.text').html(json.raw.battery+'% batt');
+      me.show();
     }
-    People.sort_by_last_time(users, user);
+    People.finish_update(user, myLatLng);
   },
 
-  sort_by_last_time: function (users, user) {
+  finish_update: function(user, latLng) {
+    People.map.panTo(latLng);
+    user.marker.push(latLng);
+    var me = $('#'+user.username+' .time .text');
+    me.fadeOut();
+    me.html(People.time_ago(user.last_date));
+    me.fadeIn();
+    People.sort_by_last_time(user);
+  },
+
+  sort_by_last_time: function (user) {
     $('#'+user.username+' .count').html(user.marker.length);
 
-    if (users.length < 2) { return; }
+    if (Users.length < 2) { return; }
     var winner = null;
 
-    for(var i in users){
-      var u = users[i];
+    for(var i in Users){
+      var u = Users[i];
       if (user.username != u.username && typeof(u.last_date)!="undefined") {
         if(u.last_date < user.last_date) {
           if(winner == null || winner.last_date < u.last_date) {

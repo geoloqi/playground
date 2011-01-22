@@ -74,39 +74,40 @@ var People = {
     for(var i in Users){
       var user = Users[i];
 
-      People.update_location(Users, user, People.map);
+      People.update_location(user);
   
       setInterval(function(user){
-        return function(){People.update_location(Users, user, People.map)}}(user)
+        return function(){People.update_location(user)}}(user)
       , 1000*60);
     }
   },
   
-  update_location: function (users, user, map){
+  update_location: function (user){
     var me = $('#'+user.username+'_update');
     me.html(me.html()+' (refreshing)');
-    People.service_update(users, user, map);
+    People.service_update(user.service.type, user);
   },
 
-  service_update: function(users, user, map) {
-    var service_url;
-    if(user.service.type == "icecondor") {
+  service_update: function(service_type, user) {
+    var url, parser;
+    if(service_type == "icecondor") {
       url = "http://icecondor.com/locations.jsonp?id="+user.service.id+"&limit=1&callback=?";
-      $.getJSON(url, function(json){People.icecondor_update(json, users, user, map)});
+      parser = People.icecondor_update;
     } 
-    if(user.service.type == "geoloqi") {
+    if(service_type == "geoloqi") {
       url = "https://api.geoloqi.com/1/share/last?geoloqi_token="+user.service.id+"&callback=?";
-      $.getJSON(url, function(json){People.geoloqi_update(json, users, user, map)});
+      parser = People.geoloqi_update;
     }
-    if(user.service.type == "latitude") {
+    if(service_type == "latitude") {
       //url = "http://www.google.com/latitude/apps/badge/api?user="+user.service.id+"&type=json";
       url = "http://jsonpify.heroku.com?resource=http://www.google.com/latitude/apps/badge/api%3Fuser="+user.service.id+"%26type=json&callback=?";
-      $.getJSON(url, function(json){People.latitude_update(json, users, user, map)});
+      parser = People.latitude_update;
     }
-    if(user.service.type == "instamapper") {
+    if(service_type == "instamapper") {
       url = 'https://www.instamapper.com/api?action=getPositions&key='+user.service.id+'&format=json&jsoncallback=?'
-      $.getJSON(url, function(json){People.instamapper_update(json, users, user, map)});
+      parser = People.instamapper_update;
     }
+    $.getJSON(url, function(json){parser(json, Users, user, People.map)});
   },
 
   latitude_update: function(json,users,user,map) {
@@ -168,8 +169,6 @@ var People = {
     }
     People.sort_by_last_time(users, user);
   },
-
-  
 
   sort_by_last_time: function (users, user) {
     $('#'+user.username+' .count').html(user.marker.length);

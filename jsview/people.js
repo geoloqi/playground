@@ -23,7 +23,12 @@ var People = {
     var myOptions = {
       zoom: 14,
       center: latlng,
-      mapTypeId: google.maps.MapTypeId.ROADMAP
+      mapTypeId: google.maps.MapTypeId.ROADMAP,
+      mapTypeControl: false,
+      streetViewControl: false,
+      zoomControl: true,
+      zoomControlOptions: {position: google.maps.ControlPosition.TOP_RIGHT},
+      panControl: false
     };
   
     return new google.maps.Map(map_element[0], myOptions);

@@ -43,18 +43,16 @@ var People = {
     for(var i in Users){
       var user = Users[i];
       user.marker = [];
-      listhtml.append(People.user_widget(user));
-      $('#'+user.username+'_count').html(user.marker.length);
+      var userhtml = People.user_widget(user);
+      listhtml.append(userhtml);
+      userhtml.find('.count').html(user.marker.length);
+      userhtml.find('.gravatar,.username').click(function(user){
+          return function(){
+          if(user.marker.length > 0) {
+            People.map.panTo(user.marker[user.marker.length-1]);
+          }
+        }}(user));
     }
-
-    listhtml.find(".gravatar,.username").click(function(){
-	var username = $(this).parent().parent().attr('id');
-        var user = People.userfind(username)
-        if(user.marker.length > 0) {
-          People.map.panTo(user.marker[user.marker.length-1]);
-        }
-    });
-  
   },
   
   map_usermarker: function(user) {
@@ -174,7 +172,7 @@ var People = {
   
 
   sort_by_last_time: function (users, user) {
-    $('#'+user.username+'_count').html(user.marker.length);
+    $('#'+user.username+' .count').html(user.marker.length);
 
     if (users.length < 2) { return; }
     var winner = null;

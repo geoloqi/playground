@@ -2,23 +2,23 @@ var People = {
 
   setup: function(map_element) {
     $.ajaxSetup({timeout:15000});
-    var map = People.setup_map(map_element);
+    People.map = People.setup_map(map_element);
     var peepso = new PeepsOverlay();
-    peepso.setMap(map);
+    peepso.setMap(People.map);
   
     $('#gmapIconTemplate').template("gmapIcon");
     $('#userWidgetTemplate').template("userWidget");
 
-    People.user_list_setup($("#followers"), Users);
+    People.user_list_setup($("#followers"));
     $("#followers .find").click(function(){
 	var username = $(this).parent().parent().attr('id');
         var user = People.userfind(username)
         if(user.marker.length > 0) {
-          map.panTo(user.marker[user.marker.length-1]);
+          People.map.panTo(user.marker[user.marker.length-1]);
         }
     });
   
-    People.follow_users(map, Users);
+    People.follow_users();
   },
   
   setup_map: function (map_element) {
@@ -47,16 +47,16 @@ var People = {
   user_list_loaded: function (data) {
   },
   
-  user_list_setup: function (ulist, users) {
-    for(var i in users){
+  user_list_setup: function (listhtml) {
+    for(var i in Users){
       var user = Users[i];
       user.marker = [];
-      ulist.append(People.user_widget(user));
+      listhtml.append(People.user_widget(user));
       $('#'+user.username+'_count').html(user.marker.length);
     }
   },
   
-  user_infopanel: function(user) {
+  map_usermarker: function(user) {
     var panel = $.tmpl("gmapIcon", {gravatar_url:People.gravatar(user.email,30)});
     panel.attr('id', 'infopanel_'+user.username);
     return panel;
@@ -71,14 +71,14 @@ var People = {
     return panel;
   },
 
-  follow_users: function (map, users) {
-    for(var i in users){
-      var user = users[i];
+  follow_users: function () {
+    for(var i in Users){
+      var user = Users[i];
 
-      People.update_location(users, user, map);
+      People.update_location(Users, user, People.map);
   
       setInterval(function(user){
-        return function(){People.update_location(users, user, map)}}(user)
+        return function(){People.update_location(Users, user, People.map)}}(user)
       , 1000*60);
     }
   },
@@ -170,6 +170,8 @@ var People = {
     People.sort_by_last_time(users, user);
   },
 
+  
+
   sort_by_last_time: function (users, user) {
     $('#'+user.username+'_count').html(user.marker.length);
 
@@ -255,7 +257,7 @@ PeepsOverlay.prototype.onAdd = function() {
   var pane = this.getPanes().overlayImage;
   for(var i in Users){
     var user = Users[i];
-    $(pane).append(People.user_infopanel(user));
+    $(pane).append(People.map_usermarker(user));
   }
 };
 

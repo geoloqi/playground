@@ -152,8 +152,11 @@ var People = {
   },
 
   finish_update: function(user, latLng) {
-    People.map.panTo(latLng);
     user.marker.push(latLng);
+    People.needsSort = true;
+    setTimeout(People.sort_users, 1000*2);
+
+    People.map.panTo(latLng);
     var me = $('#'+user.username+' .time .text');
     me.fadeOut();
     me.html(People.time_ago(user.last_date));
@@ -161,28 +164,35 @@ var People = {
     var clock_img = $('#'+user.username+' .time .image');
     clock_img.attr('src', 'icon_clock.gif');
     $('#'+user.username+' .count').html(user.marker.length);
-    People.sort_by_last_time(user);
+  },
+  canSort: true,
+  sort_users: function() {
+    if(People.canSort) {
+      if(People.needsSort) {
+        People.needsSort = false;
+
+        People.canSort = false;
+        sorted_users = Users.slice(0);
+        sorted_users.sort(People.sort_by_last_time);
+
+        jQuery(sorted_users).each(function() {
+          element = $('#'+this.username);
+          element.appendTo(element.parent());
+        });
+        People.canSort = true;
+      } else {
+        People.needsSort = false;
+      }
+      return sorted_users;
+    } else {
+      setTimeout(People.sort_users, 50);
+    }
   },
 
-  sort_by_last_time: function (user) {
-    if (Users.length < 2) { return; }
-    var winner = null;
-
-    for(var i in Users){
-      var u = Users[i];
-      if (user.username != u.username && typeof(u.last_date)!="undefined") {
-        if(u.last_date < user.last_date) {
-          if(winner == null || winner.last_date < u.last_date) {
-            winner = u;
-          }
-        }
-      }
-    }
-
-    if(winner != null) {
-      $('#followers').remove($('#'+user.username));
-      $('#'+winner.username).before($('#'+user.username));
-    }
+  sort_by_last_time: function (a,b) {
+    var x = a.last_date;
+    var y = b.last_date;
+    return ((x < y) ? 1 : ((x > y) ? -1 : 0));
   },
 
   time_ago: function(date) {

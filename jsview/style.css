@@ -1,23 +1,84 @@
+html, body, #content, #map {
+  height: 100%;
+}
 body {
   padding: 0;
   margin: 0;
-  background: grey;
+  font-family: "Lucida Grande", "Lucida Sans", Arial, sans-serif
 }
-img { border: 0}
+img { border: 0; }
 #sidebar {
-  float: left; 
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 200px;
+  overflow: auto;
+  padding: 0 .5em;
+  z-index: 99;
+  background: rgba(100,100,100, 0.6);
 }
-#menubar {
+#sidebar h1 {
   color: white;
-  text-align: center;
+  margin: 0;
+  font-size: 1.2em;
+  display: none;
 }
-#map {
-  height: 700px;
-  border: 0.2em black solid;
+#followers {
+  list-style-type: none;
+  padding: 0;
+  margin: .5em 0;`
 }
 .follower {
-  font-family:"Times New Roman",Georgia,Serif;
-  margin-top: 0.2em;
-  margin-bottom: 0.2em;
-  background: white;
+  font-size: 13px;
+  padding: .5em;
+  margin: .4em 0;
+  background: rgba(220,220,220,0.8);
+  -moz-border-radius: 0.5em;;
+  -webkit-border-radius: 0.5em;;
+  -o-border-radius: 0.5em;;
+  -ms-border-radius: 0.5em;;
+  -khtml-border-radius: 0.5em;;
+  border-radius: 0.5em;
+}
+.follower .gravatar {
+  margin-right: .3em;
+  float: left;
+  display: block;
+}
+.follower .details {
+  float: left;
+}
+.follower .username {
+  text-decoration: none;
+  color: #000;
+  font-weight: bold;
+}
+.follower .username,
+.follower .time,
+.follower .battery {
+  padding-left: 20px;
+  line-height: 20px;
+  background-position: left center;
+  background-repeat: no-repeat;
+}
+.follower .time {
+  background-image: url('icon_clock.gif');
+}
+.follower .time.spinning {
+  background-image: url('icon_clock_spin.gif');
+}
+.follower .battery {
+  background-image: url('icon_world_dynamic.gif');
+}
+
+
+.geoloqi .username {
+  background-image: url('geoloqi.png');
+}
+.icecondor .username {
+  background-image: url('icecondor.png');
+}
+.latitude .username {
+  background-image: url('latitude.png');
 }

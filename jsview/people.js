@@ -12,10 +12,9 @@ var People = {
     People.user_list_setup($("#followers"));
     People.follow_users();
   },
+
   
   setup_map: function (map_element) {
-    map_element.css('height:'+window.innerHeight+'px');
-
     // initial map center
     var last = {lat: 45.5, lng: -122.65};
   
@@ -69,7 +68,7 @@ var People = {
   user_widget: function(user) {
     var panel = $.tmpl("userWidget", 
                    { gravatar_url: People.gravatar(user.email,35),
-                     service_icon_url: user.service.type+".png",
+                     service_type: user.service.type,
                      username: user.username });
     panel.attr('id', user.username);
     return panel;
@@ -88,8 +87,8 @@ var People = {
   },
   
   update_location: function (user){
-    var clock_img = $('#'+user.username+' .time .image');
-    clock_img.attr('src', 'icon_clock_spin.gif');
+    var time_element = $('#'+user.username+' .time');
+    time_element.addClass('spinning');
     People.start_update(user.service.type, user);
   },
 
@@ -144,9 +143,9 @@ var People = {
                                           json.location.position.longitude);
     user.last_date = new Date(json.date_ts*1000);
     if(typeof(json.raw.battery)!="undefined") {
-      var me = $('#'+user.username+' .battery');
-      me.find('.text').html(json.raw.battery+'% batt');
-      me.show();
+      var battery_element = $('#'+user.username+' .battery');
+      battery_element.html(json.raw.battery+'% batt');
+      battery_element.show();
     }
     People.finish_update(user, myLatLng);
   },
@@ -157,12 +156,9 @@ var People = {
     setTimeout(People.sort_users, 1000*2);
 
     People.map.panTo(latLng);
-    var me = $('#'+user.username+' .time .text');
-    me.fadeOut();
-    me.html(People.time_ago(user.last_date));
-    me.fadeIn();
-    var clock_img = $('#'+user.username+' .time .image');
-    clock_img.attr('src', 'icon_clock.gif');
+    var myTime = $('#'+user.username+' .time');
+    myTime.html(People.time_ago(user.last_date));
+    myTime.removeClass('spinning');
     $('#'+user.username+' .count').html(user.marker.length);
   },
   canSort: true,

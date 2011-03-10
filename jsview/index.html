@@ -20,8 +20,8 @@
   <body>
     <div id="content">
       <div id="sidebar"> 
-        <div id="menubar">People</div>
-        <div id="followers"></div>
+        <h1>People</h1>
+        <ul id="followers"></ul>
       </div>
       <div id="map"/>
     </div>
@@ -34,24 +34,14 @@
     </script>
 
     <script id="userWidgetTemplate" type="text/x-jquery-tmpl">
-      <div class="follower">
-        <div style="float:left">
-          <a class="gravatar" href="#">
-            <img src="${gravatar_url}" />
-          </a>
-        </div>
-        <div style="float:left">
-          <img src="${service_icon_url}">
+      <li class="follower ${service_type}">
+        <a class="gravatar" href="#">
+          <img src="${gravatar_url}" />
+        </a>
+        <div class='details'>
           <a class="username" href="#"> ${username} </a>
-          <div class="time">
-            <img class="image" src="icon_clock.gif" style="float:left">
-            <div class="text"></div>
-          </div>
-          <div class="battery" style="display:none">
-            <img id="${username}_battery_img" 
-                 src="icon_world_dynamic.gif" style="float:left">
-            <div class="text"> </div>
-          </div>
+          <div class="time"></div>
+          <div class="battery" style="display:none"></div>
         </div>
         <div>
           <!-- <span class="count"></span> points -->

@@ -18,6 +18,15 @@ img { border: 0; }
   z-index: 99;
   background: rgba(100,100,100, 0.6);
 }
+#options {
+  position: absolute;
+  bottom: .5em;
+  right: .5em;
+  z-index: 99;
+  background: rgba(255,255,255,0.8);
+  font-size: 13px;
+  padding: .5em;
+}
 #sidebar h1 {
   color: white;
   margin: 0;

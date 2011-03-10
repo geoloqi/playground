@@ -1,6 +1,59 @@
+var Util = function() {
+  // Cookie functions swiped from http://www.quirksmode.org/js/cookies.html
+  function writeCookie(name,value,days) {
+    var expires;
+    if (days) {
+      var date = new Date();
+      date.setTime(date.getTime()+(days*24*60*60*1000));
+      expires = "; expires="+date.toGMTString();
+    } else {
+      expires = "";
+    }
+    document.cookie = name+"="+value+expires+"; path=/";
+  }
+
+  function readCookie(name) {
+    var nameEQ = name + "=";
+    var ca = document.cookie.split(';');
+    for(var i=0;i < ca.length;i++) {
+      var c = ca[i];
+      while (c.charAt(0)==' ') { c = c.substring(1,c.length); }
+      if (c.indexOf(nameEQ) === 0) { return c.substring(nameEQ.length,c.length); }
+    }
+    return null;
+  }
+
+  function eraseCookie(name) {
+    createCookie(name,"",-1);
+  }
+
+  function writeJsonCookie(name, obj, days) {
+    var json = escape(JSON.stringify(obj));
+    this.writeCookie(name, json, days);
+  }
+
+  function readJsonCookie(name) {
+    var raw = this.readCookie(name);
+    var data = null;
+    if(raw) {
+      data = JSON.parse(unescape(raw));
+    }
+    return data;
+  }
+
+  return({
+    writeCookie: writeCookie,
+    readCookie: readCookie,
+    eraseCookie: eraseCookie,
+    writeJsonCookie: writeJsonCookie,
+    readJsonCookie: readJsonCookie
+  });
+}();
+
 var People = {
 
   setup: function(map_element) {
+    this.setup_options();
     $.ajaxSetup({timeout:15000});
     People.map = People.setup_map(map_element);
     var peepso = new PeepsOverlay();
@@ -13,6 +66,27 @@ var People = {
     People.follow_users();
   },
 
+  setup_options: function() {
+    this.load_options();
+    $('#panMapCheckbox').change( jQuery.proxy(this.options_changed, this) );
+    this.options_changed();
+  },
+
+  load_options: function() {
+    this.options = Util.readJsonCookie('options') || {};
+    if(this.options.panMap === false) {
+      $('#panMapCheckbox').removeAttr('checked');
+    }
+  },
+
+  save_options: function() {
+    Util.writeJsonCookie('options', this.options);
+  },
+
+  options_changed: function() {
+    this.options.panMap = $('#panMapCheckbox').is(':checked');
+    this.save_options();
+  },
   
   setup_map: function (map_element) {
     // initial map center
@@ -155,7 +229,7 @@ var People = {
     People.needsSort = true;
     setTimeout(People.sort_users, 1000*2);
 
-    People.map.panTo(latLng);
+    if(this.options.panMap) { People.map.panTo(latLng); }
     var myTime = $('#'+user.username+' .time');
     myTime.html(People.time_ago(user.last_date));
     myTime.removeClass('spinning');

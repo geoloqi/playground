@@ -341,7 +341,7 @@ PeepsOverlay.prototype.draw = function() {
     if(user.marker.length > 0) {
       var point = this.getProjection().fromLatLngToDivPixel(user.marker[user.marker.length-1]);
       new_x = point.x-(panel.width()/2);
-      new_y = point.y-panel.height();
+      new_y = point.y-(panel.height()/2);
       for(var i=0; i < user.marker.length; i++) {
         var point = this.getProjection().fromLatLngToDivPixel(user.marker[i]);
       }
@@ -374,7 +374,6 @@ PeepsOverlay.prototype.draw = function() {
       } else if((60*one_day) <= ms_ago) {
         opacity = 0.1;
       }
-
       panel.fadeTo(50, opacity);
     }
     panel.css("left",new_x+"px");

@@ -56,8 +56,8 @@ var People = {
     this.setup_options();
     $.ajaxSetup({timeout:15000});
     People.map = People.setup_map(map_element);
-    var peepso = new PeepsOverlay();
-    peepso.setMap(People.map);
+    this.peepso = new PeepsOverlay();
+    this.peepso.setMap(People.map);
   
     $('#gmapIconTemplate').template("gmapIcon");
     $('#userWidgetTemplate').template("userWidget");
@@ -226,6 +226,7 @@ var People = {
 
   finish_update: function(user, latLng) {
     user.marker.push(latLng);
+    this.peepso.draw();
     People.needsSort = true;
     setTimeout(People.sort_users, 1000*2);
 

@@ -349,6 +349,34 @@ PeepsOverlay.prototype.draw = function() {
       new_x = -50
       new_y = -50;
     }
+    if(typeof user.last_date != 'undefined') {
+      var ms_ago = (new Date()).getTime() - user.last_date.getTime();
+      var one_hour = 3600000;
+      var one_day = (24*one_hour);
+
+      var opacity = 1;
+      if(one_hour < ms_ago && ms_ago < (6*one_hour)) {
+        opacity = 0.9;
+      } else if((6*one_hour) <= ms_ago && ms_ago < (12*one_hour)) {
+        opacity = 0.8;
+      } else if((12*one_hour) <= ms_ago && ms_ago < one_day) {
+        opacity = 0.7;
+      } else if(one_day <= ms_ago && ms_ago < (3*one_day)) {
+        opacity = 0.6;
+      } else if((3*one_day) <= ms_ago && ms_ago < (7*one_day)) {
+        opacity = 0.5;
+      } else if((7*one_day) <= ms_ago && ms_ago < (14*one_day)) {
+        opacity = 0.4;
+      } else if((14*one_day) <= ms_ago && ms_ago < (30*one_day)) {
+        opacity = 0.3;
+      } else if((30*one_day) <= ms_ago && ms_ago < (60*one_day)) {
+        opacity = 0.2;
+      } else if((60*one_day) <= ms_ago) {
+        opacity = 0.1;
+      }
+
+      panel.fadeTo(50, opacity);
+    }
     panel.css("left",new_x+"px");
     panel.css("top",new_y+"px");
   }

@@ -91,3 +91,11 @@ img { border: 0; }
 .latitude .username {
   background-image: url('latitude.png');
 }
+.map_marker {
+  border: 2px solid #222;
+}
+.map_marker, .map_marker img {
+  width: 30px;
+  height: 30px;
+  -webkit-border-radius: 20px;
+}

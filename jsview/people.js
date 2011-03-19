@@ -209,6 +209,11 @@ var People = {
     var myLatLng = new google.maps.LatLng(json[0].location.geom.y, 
                                           json[0].location.geom.x);
     user.last_date = (new Date()).setISO8601(json[0].location.timestamp);
+    if(typeof(json[0].location.batterylevel)!="undefined") {
+      var battery_element = $('#'+user.username+' .battery');
+      battery_element.html(json[0].location.batterylevel+'% batt');
+      battery_element.show();
+    }
     People.finish_update(user, myLatLng);
   },
 

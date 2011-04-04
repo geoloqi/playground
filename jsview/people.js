@@ -50,6 +50,16 @@ var Util = function() {
   });
 }();
 
+var TriMet = {
+  routes : {},
+  parseRoute: function(data, textStatus, jqXHR) {
+    var west = data.features[0];
+    var east = data.features[1];
+    var routename = data.features[0].properties.RTE;
+    this.routes[routename] = data
+  }
+}
+
 var People = {
 
   setup: function(map_element) {
@@ -185,6 +195,13 @@ var People = {
       url = 'https://www.instamapper.com/api?action=getPositions&key='+user.service.id+'&format=json&jsoncallback=?'
       parser = People.instamapper_update;
     }
+    if(service_type == "trimet") {
+      var components = user.service.id.split(";")
+      var line = components[0], stop = components[1];
+      
+      url = 'http://developer.trimet.org/ws/V1/routeConfig?appID='+Auth['trimet']+'&route='+line+'&dir=1&stops=1&tp=1&json=true&callback=?'
+      parser = People.trimet_update;
+    }
     $.getJSON(url, function(json){parser(json, Users, user, People.map)});
   },
 
@@ -229,6 +246,39 @@ var People = {
     People.finish_update(user, myLatLng);
   },
 
+  trimet_update: function(json,users,user,map) {
+    var routes = json.resultSet;
+    TriMet.routes[routes.route[0].route] = routes;
+    
+    var stops = [];
+    routes.route[0].dir[0].stop.forEach(function(stop) {
+      stops.push(stop.locid);
+    });
+    url = 'http://developer.trimet.org/ws/V1/arrivals?appID='+Auth['trimet']+'&locIDs='+stops.join(',')+'&json=true&callback=?'
+    $.getJSON(url, function(json){People.trimet_update2(json, Users, user, People.map)});
+  },
+
+  trimet_update2: function(json, users, user, map) {
+    var arrivals = json.resultSet.arrival;
+    estimated_arrivals = arrivals.filter(function(a){return a.status == "estimated"})
+    unique_arrivals = []
+    estimated_arrivals.forEach(function(arrival) {
+      if (!unique_arrivals.some(function(a){
+             return (a.blockPosition.lat == arrival.blockPosition.lat) &&
+                    (a.blockPosition.lng == arrival.blockPosition.lng) })){
+        unique_arrivals.push(arrival)
+      }
+    });
+    unique_arrivals.forEach(function(a) {
+    console.log('trimet: lat:'+a.blockPosition.lat+' long:'+
+                a.blockPosition.lng+' feet:'+a.blockPosition.feet);
+    });
+    var block = unique_arrivals[0].blockPosition
+    var myLatLng = new google.maps.LatLng(block.lat,
+                                          block.lng);
+    People.finish_update(user, myLatLng);
+  },
+
   finish_update: function(user, latLng) {
     user.marker.push(latLng);
     this.peepso.draw();
@@ -241,6 +291,7 @@ var People = {
     myTime.removeClass('spinning');
     $('#'+user.username+' .count').html(user.marker.length);
   },
+
   canSort: true,
   sort_users: function() {
     if(People.canSort) {

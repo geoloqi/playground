@@ -333,7 +333,7 @@ var People = {
   },
 
   gravatar: function(email,size) {
-    return "http://gravatar.com/avatar/"+MD5_hexhash(email)+"?s="+size;
+    return "http://gravatar.com/avatar/"+md5(email)+"?s="+size;
   },
 
   userfind: function(username) {
